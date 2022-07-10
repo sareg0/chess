@@ -1,6 +1,10 @@
+<script setup lang="ts">
+import GameBoard from "@/components/GameBoard/GameBoard.vue";
+</script>
+
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <GameBoard />
   </div>
 </template>
 
