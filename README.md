@@ -1,3 +1,7 @@
+# Table of Contents
+[Format/Lint on save with VSCode](#formatlint-on-save-with-vscode)
+
+
 # vue-chess
 
 This template should help get you started developing with Vue 3 in Vite.
@@ -57,3 +61,36 @@ npm run test:e2e # or `npm run test:e2e:ci` for headless testing
 ```sh
 npm run lint
 ```
+
+### Format/Lint on save with VSCode 
+
+To make sure the code adheres to the format of the repository, you can edit the settings in VSCode to use the `eslint` configuration for formatting the linting the code.
+
+#### Step 1: Install the ESLint Extension for VSCode
+
+[ESLint by Microsoft](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+
+ESLint will use the configuration specified in the [`.eslintrc` file in the root of this project]("./.eslintrc.cjs") to understand the type of formatting standard and linting rules it should use.
+
+
+### Step 2: Edit VSCode Workspace settings.
+
+The ESLint extension adds variables to the settings for VSCode, which can be used to tell VSCode how to lint the project.
+
+Update the "Workspace" settings with the following options:
+
+
+```json
+{
+    "eslint.format.enable": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true,
+    }
+}
+```
+
+
+> `eslint.format.enable`: enables ESLint as a formatter for validated files. Although you can also use the formatter on save using the setting `editor.formatOnSave` it is recommended to use the `editor.codeActionsOnSave` feature since it allows for better configurability. - _ESLint GitHub Repo, ["Settings Options"](https://github.com/Microsoft/vscode-eslint#settings-options)_
+
+
+Need help finding your VSCode settings, or understanding the difference between the `User` and `Workspace` settings? Check out the documentation on [User and Workspace Settings](https://code.visualstudio.com/docs/getstarted/settings).
