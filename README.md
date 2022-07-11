@@ -62,11 +62,11 @@ npm run test:e2e # or `npm run test:e2e:ci` for headless testing
 npm run lint
 ```
 
-### Format/Lint on save with VSCode 
+## Format/Lint on save with VSCode 
 
 To make sure the code adheres to the format of the repository, you can edit the settings in VSCode to use the `eslint` configuration for formatting the linting the code.
 
-#### Step 1: Install the ESLint Extension for VSCode
+### Step 1: Install the ESLint Extension for VSCode
 
 [ESLint by Microsoft](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
 
