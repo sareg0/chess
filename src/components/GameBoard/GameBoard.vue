@@ -1,5 +1,6 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import BoardCell from "@/components/BoardCell/BoardCell.vue";
 
 export default defineComponent({
   data() {
@@ -17,6 +18,7 @@ export default defineComponent({
       return rowsCopy.reverse();
     },
   },
+  components: { BoardCell },
 });
 </script>
 
@@ -42,21 +44,18 @@ export default defineComponent({
         >{{ row }}</b
       >
       <!-- cells for the pieces -->
-
-      <b
-        data-testid="positionOnBoard"
+      <BoardCell
         v-for="(column, columnIndex) in columns"
-        :key="rowIndex + columnIndex"
-        class="cell"
-        :class="[(rowIndex + columnIndex) % 2 === 0 ? 'odd' : 'even']"
+        :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
+        :position="`${row}${column}`"
+        :column="columnIndex"
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
         }"
-      >
-        {{ `${row} ${column}` }}</b
-      >
-      <!-- another row number column -->
+        :key="rowIndex + columnIndex"
+        data-testid="positionOnBoard"
+      ></BoardCell>
       <b
         class="cell"
         :style="{
@@ -92,19 +91,6 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.odd {
-  background-color: paleturquoise;
-}
-
-.even {
-  background-color: palevioletred;
-}
-
-.piece {
-  background-color: rgb(226, 209, 244);
-  border: 2px solid black;
 }
 </style>
 
