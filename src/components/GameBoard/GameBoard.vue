@@ -7,6 +7,7 @@ export default defineComponent({
     return {
       columns: ["A", "B", "C", "D", "E", "F", "G", "H"],
       rows: [1, 2, 3, 4, 5, 6, 7, 8],
+      firstPosition: 0,
     };
   },
   computed: {
@@ -18,11 +19,24 @@ export default defineComponent({
       return rowsCopy.reverse();
     },
   },
+  methods: {
+    handleMove() {
+      console.log("move");
+      // pick a random spot on the board
+      if (this.firstPosition === 0) {
+        this.firstPosition = 5;
+      } else {
+        this.firstPosition = 0;
+      }
+      console.log("position", this.firstPosition);
+    },
+  },
   components: { BoardCell },
 });
 </script>
 
 <template>
+  <button @click="handleMove" data-testid="moveButton">make a move</button>
   <section class="boardAsGrid" data-testid="board" :style="cssVars">
     <!-- row for the letters -->
     <b
@@ -47,15 +61,24 @@ export default defineComponent({
       <BoardCell
         v-for="(column, columnIndex) in columns"
         :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
-        :position="`${row}${column}`"
+        :position="
+          firstPosition === rowIndex && firstPosition === columnIndex
+            ? `piece${firstPosition}`
+            : `${row}${column}`
+        "
         :column="columnIndex"
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
         }"
         :key="rowIndex + columnIndex"
-        data-testid="positionOnBoard"
-      ></BoardCell>
+        :data-testid="
+          firstPosition === rowIndex && firstPosition === columnIndex
+            ? 'piece'
+            : 'positionOnBoard'
+        "
+      >
+      </BoardCell>
       <b
         class="cell"
         :style="{

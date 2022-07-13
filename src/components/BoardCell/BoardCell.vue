@@ -26,7 +26,3 @@ defineProps<{
   background-color: palevioletred;
 }
 </style>
-<!-- :style="{
-      gridColumnStart: columnIndex + 2,
-      gridRowStart: rowIndex + 2,
-    }" -->
