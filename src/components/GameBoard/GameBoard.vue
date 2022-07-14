@@ -1,11 +1,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
+import BoardCell from "@/components/BoardCell/BoardCell.vue";
 
 export default defineComponent({
   data() {
     return {
       columns: ["A", "B", "C", "D", "E", "F", "G", "H"],
       rows: [1, 2, 3, 4, 5, 6, 7, 8],
+      firstPosition: 0,
     };
   },
   computed: {
@@ -17,48 +19,69 @@ export default defineComponent({
       return rowsCopy.reverse();
     },
   },
+  methods: {
+    handleMove() {
+      console.log("move");
+      // pick a random spot on the board
+      if (this.firstPosition === 0) {
+        this.firstPosition = 5;
+      } else {
+        this.firstPosition = 0;
+      }
+      console.log("position", this.firstPosition);
+    },
+  },
+  components: { BoardCell },
 });
 </script>
 
 <template>
+  <button @click="handleMove" data-testid="moveButton">make a move</button>
   <section class="boardAsGrid" data-testid="board" :style="cssVars">
     <!-- row for the letters -->
     <b
+      class="cell letter-row"
       v-for="(column, columnIndex) in columns"
       :key="`top ${columnIndex}`"
       :style="{
         gridColumnStart: columnIndex + 2,
       }"
-      class="cell"
       >{{ column }}</b
     >
     <template v-for="(row, rowIndex) in reversedRows" :key="row">
-      <!-- row number column -->
+      <!-- number column -->
       <b
+        class="cell number-column"
         :style="{
           gridRowStart: rowIndex + 2,
         }"
-        class="cell"
         >{{ row }}</b
       >
       <!-- cells for the pieces -->
-
-      <b
-        data-testid="positionOnBoard"
+      <BoardCell
         v-for="(column, columnIndex) in columns"
-        :key="rowIndex + columnIndex"
-        class="cell"
-        :class="[(rowIndex + columnIndex) % 2 === 0 ? 'odd' : 'even']"
+        :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
+        :position="
+          firstPosition === rowIndex && firstPosition === columnIndex
+            ? `piece${firstPosition}`
+            : `${row}${column}`
+        "
+        :column="columnIndex"
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
         }"
+        :key="rowIndex + columnIndex"
+        :data-testid="
+          firstPosition === rowIndex && firstPosition === columnIndex
+            ? 'piece'
+            : 'positionOnBoard'
+        "
       >
-        {{ `${row} ${column}` }}</b
-      >
-      <!-- another row number column -->
+      </BoardCell>
+      <!-- number column -->
       <b
-        class="cell"
+        class="cell number-column"
         :style="{
           gridRowStart: rowIndex + 2,
         }"
@@ -67,8 +90,8 @@ export default defineComponent({
     </template>
     <!--another row for the letters -->
     <b
+      class="cell letter-row"
       v-for="(column, columnIndex) in columns"
-      class="cell"
       :key="`top ${columnIndex}`"
       :style="{
         gridColumnStart: columnIndex + 2,
@@ -94,17 +117,13 @@ export default defineComponent({
   align-items: center;
 }
 
-.odd {
-  background-color: paleturquoise;
+.number-column {
+  border-left: 2px solid black;
+  border-right: 2px solid black;
 }
-
-.even {
-  background-color: palevioletred;
-}
-
-.piece {
-  background-color: rgb(226, 209, 244);
-  border: 2px solid black;
+.letter-row {
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
 }
 </style>
 

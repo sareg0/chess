@@ -5,8 +5,7 @@ import GameBoard from "../GameBoard.vue";
 
 test("GameBoard", async () => {
   // How can I get warned if I am passing the wrong props to the component?
-  const { getAllByTestId } = render(GameBoard);
-  // const board = getByTestId("board");
-  const spots = getAllByTestId("positionOnBoard");
-  expect(spots).toHaveLength(64);
+  const { getByTestId } = render(GameBoard);
+  const board = getByTestId("board");
+  expect(board).toBeDefined();
 });
