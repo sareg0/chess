@@ -40,21 +40,21 @@ export default defineComponent({
   <section class="boardAsGrid" data-testid="board" :style="cssVars">
     <!-- row for the letters -->
     <b
+      class="cell letter-row"
       v-for="(column, columnIndex) in columns"
       :key="`top ${columnIndex}`"
       :style="{
         gridColumnStart: columnIndex + 2,
       }"
-      class="cell"
       >{{ column }}</b
     >
     <template v-for="(row, rowIndex) in reversedRows" :key="row">
-      <!-- row number column -->
+      <!-- number column -->
       <b
+        class="cell number-column"
         :style="{
           gridRowStart: rowIndex + 2,
         }"
-        class="cell"
         >{{ row }}</b
       >
       <!-- cells for the pieces -->
@@ -79,8 +79,9 @@ export default defineComponent({
         "
       >
       </BoardCell>
+      <!-- number column -->
       <b
-        class="cell"
+        class="cell number-column"
         :style="{
           gridRowStart: rowIndex + 2,
         }"
@@ -89,8 +90,8 @@ export default defineComponent({
     </template>
     <!--another row for the letters -->
     <b
+      class="cell letter-row"
       v-for="(column, columnIndex) in columns"
-      class="cell"
       :key="`top ${columnIndex}`"
       :style="{
         gridColumnStart: columnIndex + 2,
@@ -114,6 +115,15 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.number-column {
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+}
+.letter-row {
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
 }
 </style>
 

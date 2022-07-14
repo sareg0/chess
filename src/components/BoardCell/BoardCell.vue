@@ -19,10 +19,12 @@ defineProps<{
 }
 
 .light {
-  background-color: paleturquoise;
+  background-color: whitesmoke;
+  color: black;
 }
 
 .dark {
-  background-color: palevioletred;
+  background-color: darkblue;
+  color: white;
 }
 </style>
