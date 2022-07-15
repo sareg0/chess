@@ -14,6 +14,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "chess.js": "^0.13.3",
     "pinia": "^2.0.14",
     "vue": "^3.2.37",
     "vue-router": "^4.0.16"
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.0",
     "@testing-library/vue": "^6.6.0",
+    "@types/chess.js": "^0.13.2",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^16.11.41",
     "@vitejs/plugin-vue": "^2.3.3",
