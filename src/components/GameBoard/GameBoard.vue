@@ -18,17 +18,17 @@ export default defineComponent({
       const rowsCopy = [...this.rows];
       return rowsCopy.reverse();
     },
+    allowedMoves() {
+      return [5, 9, 55];
+    },
   },
   methods: {
     handleMove() {
       console.log("move");
-      // pick a random spot on the board
-      if (this.firstPosition === 0) {
-        this.firstPosition = 5;
-      } else {
-        this.firstPosition = 0;
-      }
-      console.log("position", this.firstPosition);
+      console.log("allowedMoves", this.allowedMoves);
+      // get piece from emitted event
+      // move piece to specified spot
+      // ToDo: animate transition of piece
     },
   },
   components: { BoardCell },
@@ -36,7 +36,6 @@ export default defineComponent({
 </script>
 
 <template>
-  <button @click="handleMove" data-testid="moveButton">make a move</button>
   <section class="boardAsGrid" data-testid="board" :style="cssVars">
     <!-- row for the letters -->
     <b
@@ -60,12 +59,9 @@ export default defineComponent({
       <!-- cells for the pieces -->
       <BoardCell
         v-for="(column, columnIndex) in columns"
+        :possibleMoves="allowedMoves"
         :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
-        :position="
-          firstPosition === rowIndex && firstPosition === columnIndex
-            ? `piece${firstPosition}`
-            : `${row}${column}`
-        "
+        :position="`${row}${column}`"
         :column="columnIndex"
         :style="{
           gridColumnStart: columnIndex + 2,
