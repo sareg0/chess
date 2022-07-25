@@ -1,41 +1,48 @@
-<script lang="ts">
-import { defineComponent } from "vue";
+<script setup lang="ts">
+import { reactive, ref, computed } from "vue";
 import BoardCell from "@/components/BoardCell/BoardCell.vue";
+import {
+  newGame,
+  move,
+  currentPlayer,
+  currentBoard,
+} from "../../../api/GameLogic";
 
-export default defineComponent({
-  data() {
-    return {
-      columns: ["A", "B", "C", "D", "E", "F", "G", "H"],
-      rows: [1, 2, 3, 4, 5, 6, 7, 8],
-      firstPosition: 0,
-    };
-  },
-  computed: {
-    cssVars() {
-      return { "--boardSize": this.rows.length };
-    },
-    reversedRows() {
-      const rowsCopy = [...this.rows];
-      return rowsCopy.reverse();
-    },
-  },
-  methods: {
-    handleMove() {
-      console.log("move");
-      // pick a random spot on the board
-      if (this.firstPosition === 0) {
-        this.firstPosition = 5;
-      } else {
-        this.firstPosition = 0;
-      }
-      console.log("position", this.firstPosition);
-    },
-  },
-  components: { BoardCell },
+const firstPosition = ref(0);
+const game = newGame();
+const state = reactive({ board: currentBoard(game) });
+const player = ref<"white" | "black">(currentPlayer(game));
+// const columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const cssVars = computed(() => {
+  return { "--boardSize": rows.value.length };
 });
+
+const rows = computed(() => {
+  const rows = [];
+  for (const [index] of Array(state.board.length).entries()) {
+    rows.push(index + 1);
+  }
+  return rows;
+});
+
+const columns = computed(() => {
+  const thingAgain = [];
+  for (const [index] of Array(state.board.length).entries()) {
+    thingAgain.push(String.fromCharCode(index + 65));
+  }
+  console.log("columns2", thingAgain);
+  return thingAgain;
+});
+
+function handleMove() {
+  move(game);
+  player.value = currentPlayer(game);
+  state.board = currentBoard(game);
+}
 </script>
 
 <template>
+  <h1>{{ player }}</h1>
   <button @click="handleMove" data-testid="moveButton">make a move</button>
   <section class="boardAsGrid" data-testid="board" :style="cssVars">
     <!-- row for the letters -->
@@ -48,7 +55,7 @@ export default defineComponent({
       }"
       >{{ column }}</b
     >
-    <template v-for="(row, rowIndex) in reversedRows" :key="row">
+    <template v-for="(row, rowIndex) in rows" :key="row">
       <!-- number column -->
       <b
         class="cell number-column"
@@ -121,6 +128,7 @@ export default defineComponent({
   border-left: 2px solid black;
   border-right: 2px solid black;
 }
+
 .letter-row {
   border-top: 2px solid black;
   border-bottom: 2px solid black;
