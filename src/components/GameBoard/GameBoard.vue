@@ -12,7 +12,6 @@ const firstPosition = ref(0);
 const game = newGame();
 const state = reactive({ board: currentBoard(game) });
 const player = ref<"white" | "black">(currentPlayer(game));
-// const columns = ["A", "B", "C", "D", "E", "F", "G", "H"];
 const cssVars = computed(() => {
   return { "--boardSize": rows.value.length };
 });
@@ -38,6 +37,14 @@ function handleMove() {
   move(game);
   player.value = currentPlayer(game);
   state.board = currentBoard(game);
+}
+
+function getPiece(rowIndex: number, columnIndex: number) {
+  const position = state.board[rowIndex][columnIndex];
+  if (position) {
+    return `${position.type}-${position.color}`;
+  }
+  return "";
 }
 </script>
 
@@ -68,22 +75,14 @@ function handleMove() {
       <BoardCell
         v-for="(column, columnIndex) in columns"
         :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
-        :position="
-          firstPosition === rowIndex && firstPosition === columnIndex
-            ? `piece${firstPosition}`
-            : `${row}${column}`
-        "
+        :position="`${getPiece(rowIndex, columnIndex)}`"
         :column="columnIndex"
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
         }"
         :key="rowIndex + columnIndex"
-        :data-testid="
-          firstPosition === rowIndex && firstPosition === columnIndex
-            ? 'piece'
-            : 'positionOnBoard'
-        "
+        data-testid="piece"
       >
       </BoardCell>
       <!-- number column -->
