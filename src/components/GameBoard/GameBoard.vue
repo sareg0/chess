@@ -6,31 +6,42 @@ import {
   move,
   currentPlayer,
   currentBoard,
-} from "../../../api/GameLogic";
+  Color,
+  type BoardSquare,
+} from "@/api/GameLogic";
+// import BoardFrame from "@/components/GameBoard/components/BoardFrame/BoardFrame.vue";
 
-const firstPosition = ref(0);
 const game = newGame();
 const state = reactive({ board: currentBoard(game) });
-const player = ref<"white" | "black">(currentPlayer(game));
+const boardSize = currentBoard(game).length;
+const player = ref<keyof typeof Color>(currentPlayer(game));
 const cssVars = computed(() => {
   return { "--boardSize": rows.value.length };
 });
 
+// Trying to create a calculated board. I can drop this for the sake of making more progress
+// const gridAreas = computed(() => {
+//   const areas = `'. ${columns.value.map(() => "LETTER").join(" ")} .'
+//   '${rows.value.map(() => "NUMBER BOARD NUMBER").join(" ")}'
+//   '. ${columns.value.map(() => "LETTER").join(" ")} .'`;
+//   console.log("gridAreas", areas);
+//   return areas;
+// });
+
 const rows = computed(() => {
   const rows = [];
-  for (const [index] of Array(state.board.length).entries()) {
+  for (const [index] of Array(boardSize).entries()) {
     rows.push(index + 1);
   }
   return rows;
 });
 
 const columns = computed(() => {
-  const thingAgain = [];
-  for (const [index] of Array(state.board.length).entries()) {
-    thingAgain.push(String.fromCharCode(index + 65));
+  const columns = [];
+  for (const [index] of Array(boardSize).entries()) {
+    columns.push(String.fromCharCode(index + 65));
   }
-  console.log("columns2", thingAgain);
-  return thingAgain;
+  return columns;
 });
 
 function handleMove() {
@@ -39,20 +50,39 @@ function handleMove() {
   state.board = currentBoard(game);
 }
 
-function getPiece(rowIndex: number, columnIndex: number) {
+function getPiece(rowIndex: number, columnIndex: number): BoardSquare | null {
   const position = state.board[rowIndex][columnIndex];
-  if (position) {
-    return `${position.type}-${position.color}`;
+
+  return position;
+}
+
+function handleSelect() {
+  handleSelect;
+}
+
+function isDisabled(rowIndex: number, columnIndex: number): boolean {
+  const piece = getPiece(rowIndex, columnIndex);
+  if (piece) {
+    return piece.color !== player.value;
   }
-  return "";
+  return true;
 }
 </script>
 
 <template>
   <h1>{{ player }}</h1>
   <button @click="handleMove" data-testid="moveButton">make a move</button>
-  <section class="boardAsGrid" data-testid="board" :style="cssVars">
+  <section class="boardAsGrid" data-testid="board" :style="{ ...cssVars }">
     <!-- row for the letters -->
+    <!-- Tring to extract a component to avoid repetition -->
+    <!-- <span
+      :style="{
+        gridColumnStart: 2,
+        display: 'grid',
+      }"
+    >
+      <BoardFrame :items="columns" position="top" />
+    </span> -->
     <b
       class="cell letter-row"
       v-for="(column, columnIndex) in columns"
@@ -72,19 +102,24 @@ function getPiece(rowIndex: number, columnIndex: number) {
         >{{ row }}</b
       >
       <!-- cells for the pieces -->
-      <BoardCell
+      <button
         v-for="(column, columnIndex) in columns"
-        :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
-        :position="`${getPiece(rowIndex, columnIndex)}`"
-        :column="columnIndex"
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
         }"
+        @click="handleSelect"
+        :disabled="isDisabled(rowIndex, columnIndex)"
         :key="rowIndex + columnIndex"
-        data-testid="piece"
       >
-      </BoardCell>
+        <BoardCell
+          :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
+          :position="getPiece(rowIndex, columnIndex)"
+          :column="columnIndex"
+          data-testid="piece"
+        >
+        </BoardCell>
+      </button>
       <!-- number column -->
       <b
         class="cell number-column"

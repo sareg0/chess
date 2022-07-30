@@ -1,14 +1,19 @@
 <script setup lang="ts">
+import type { BoardSquare } from "@/api/GameLogic";
+
 defineProps<{
   background: "light" | "dark";
-  position: string;
+  // position will be the return type of the board
+  position?: BoardSquare | null;
 }>();
 </script>
 
 <template>
-  <b :data-testid="position" class="cell" :class="background">
-    {{ position }}
-  </b>
+  <template v-if="position">
+    <b :data-testid="position.square" class="cell" :class="background">
+      {{ position.type }}-{{ position.color }}
+    </b>
+  </template>
 </template>
 
 <style scoped>
