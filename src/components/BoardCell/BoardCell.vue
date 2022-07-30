@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BoardSquare } from "@/api/GameLogic";
+import { Pieces } from "@/api/GameLogic";
 
 defineProps<{
   background: "light" | "dark";
@@ -11,6 +12,7 @@ defineProps<{
 <template>
   <template v-if="position">
     <b :data-testid="position.square" class="cell" :class="background">
+      {{ Pieces[position.type].emoji }}
       {{ position.type }}-{{ position.color }}
     </b>
   </template>

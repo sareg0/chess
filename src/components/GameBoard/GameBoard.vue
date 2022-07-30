@@ -58,7 +58,7 @@ function isASquare(value: string): value is Square {
   // The type of Square and SQUARES is pretty hard to get
   // around.
   // SQUARES needs to be cast as an array of strings
-  // to be able to check that the value is included. Much confusing.
+  // to be able to check that the value is included. Much confusing.🤷🏻‍♀️
   const squares = [...SQUARES] as string[];
   return squares.includes(value);
 }
@@ -105,8 +105,9 @@ function handleMove() {
 </script>
 
 <template>
-  <h1>{{ player }}</h1>
-  <h2>{{ selectedPiece }}</h2>
+  <!-- https://bobbyhadz.com/blog/typescript-const-enum-member-can-only-be-accessed-using-string-literal - thankyou -->
+  <h1>{{ Color[player] }}</h1>
+  <h2>{{ selectedPiece || "no piece selected" }}</h2>
   <!-- <button @click="handleMove()" data-testid="moveButton">make a move</button> -->
   <section class="boardAsGrid" data-testid="board" :style="{ ...cssVars }">
     <!-- row for the letters -->
