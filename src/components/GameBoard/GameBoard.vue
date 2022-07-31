@@ -95,6 +95,10 @@ function handleMove() {
   state.board = currentBoard(game);
 }
 
+function isSelected(row: number, column: string): boolean {
+  return selectedPiece.value === sanString(row, column);
+}
+
 // function isDisabled(rowIndex: number, columnIndex: number): boolean {
 //   const piece = getPiece(rowIndex, columnIndex);
 //   if (piece) {
@@ -106,8 +110,10 @@ function handleMove() {
 
 <template>
   <!-- https://bobbyhadz.com/blog/typescript-const-enum-member-can-only-be-accessed-using-string-literal - thankyou -->
-  <h1>{{ Color[player] }}</h1>
-  <h2>{{ selectedPiece || "no piece selected" }}</h2>
+  <div>
+    <h1>{{ Color[player] }}</h1>
+    <h2>{{ selectedPiece || "no piece selected" }}</h2>
+  </div>
   <!-- <button @click="handleMove()" data-testid="moveButton">make a move</button> -->
   <section class="boardAsGrid" data-testid="board" :style="{ ...cssVars }">
     <!-- row for the letters -->
@@ -144,12 +150,16 @@ function handleMove() {
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
+          padding: 0,
+          borderRadius: 0,
+          borderWidth: 0,
         }"
         @click="handleSelect(row, column)"
         :key="rowIndex + columnIndex"
       >
         <BoardCell
           :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
+          :selected="isSelected(row, column)"
           :position="getPiece(rowIndex, columnIndex)"
           :column="columnIndex"
           data-testid="piece"
@@ -183,7 +193,6 @@ function handleMove() {
   display: grid;
   grid-template-columns: repeat(var(--boardSize) + 2, 1fr);
   grid-template-rows: repeat(var(--boardSize) + 2, 1fr);
-  grid-gap: 1px;
   width: 400px;
   height: 400px;
 }
