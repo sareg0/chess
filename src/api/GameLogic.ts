@@ -2,7 +2,14 @@ import {
   Chess,
   type ChessInstance,
   type PieceType,
+  type ShortMove,
   type Square,
+  PAWN,
+  KNIGHT,
+  BISHOP,
+  ROOK,
+  QUEEN,
+  KING,
 } from "chess.js";
 // https://github.com/jhlywa/chess.js/blob/master/README.md#example-code
 
@@ -10,13 +17,11 @@ export function newGame() {
   return new Chess();
 }
 
-export function move(game: ChessInstance) {
+export function move(game: ChessInstance, move: ShortMove) {
+  console.log("move", move);
   if (!game.game_over()) {
-    const moves = game.moves();
-    const move = moves[Math.floor(Math.random() * moves.length)];
-    game.move(move);
+    return game.move(move);
   }
-  console.log(game.board());
 }
 
 export function currentPlayer(game: ChessInstance) {
@@ -33,7 +38,28 @@ export interface BoardSquare {
   square: Square;
 }
 
-export const enum Color {
+export enum Color {
   "w" = "white",
   "b" = "black",
 }
+
+export const Pieces = {
+  [PAWN]: {
+    emoji: "♙",
+  },
+  [KNIGHT]: {
+    emoji: "♘",
+  },
+  [BISHOP]: {
+    emoji: "♗",
+  },
+  [ROOK]: {
+    emoji: "♖",
+  },
+  [QUEEN]: {
+    emoji: "♕",
+  },
+  [KING]: {
+    emoji: "♔",
+  },
+};

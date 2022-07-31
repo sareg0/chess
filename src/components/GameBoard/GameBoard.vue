@@ -9,6 +9,7 @@ import {
   Color,
   type BoardSquare,
 } from "@/api/GameLogic";
+import { SQUARES, type ShortMove, type Square } from "chess.js";
 // import BoardFrame from "@/components/GameBoard/components/BoardFrame/BoardFrame.vue";
 
 const game = newGame();
@@ -18,6 +19,8 @@ const player = ref<keyof typeof Color>(currentPlayer(game));
 const cssVars = computed(() => {
   return { "--boardSize": rows.value.length };
 });
+const selectedPiece = ref<ShortMove["from"] | null>();
+const desiredPlace = ref<ShortMove["to"] | null>();
 
 // Trying to create a calculated board. I can drop this for the sake of making more progress
 // const gridAreas = computed(() => {
@@ -33,9 +36,10 @@ const rows = computed(() => {
   for (const [index] of Array(boardSize).entries()) {
     rows.push(index + 1);
   }
-  return rows;
+  return rows.reverse();
 });
 
+// type return?
 const columns = computed(() => {
   const columns = [];
   for (const [index] of Array(boardSize).entries()) {
@@ -44,34 +48,73 @@ const columns = computed(() => {
   return columns;
 });
 
-function handleMove() {
-  move(game);
-  player.value = currentPlayer(game);
-  state.board = currentBoard(game);
-}
-
 function getPiece(rowIndex: number, columnIndex: number): BoardSquare | null {
   const position = state.board[rowIndex][columnIndex];
 
   return position;
 }
 
-function handleSelect() {
-  handleSelect;
+function isASquare(value: string): value is Square {
+  // The type of Square and SQUARES is pretty hard to get
+  // around.
+  // SQUARES needs to be cast as an array of strings
+  // to be able to check that the value is included. Much confusing.🤷🏻‍♀️
+  const squares = [...SQUARES] as string[];
+  return squares.includes(value);
 }
 
-function isDisabled(rowIndex: number, columnIndex: number): boolean {
-  const piece = getPiece(rowIndex, columnIndex);
-  if (piece) {
-    return piece.color !== player.value;
-  }
-  return true;
+function sanString(row: number, column: string) {
+  return `${column}${row}`.toLowerCase();
 }
+
+function handleSelect(row: number, column: string) {
+  const woah = sanString(row, column);
+  if (isASquare(woah)) {
+    if (selectedPiece.value) {
+      desiredPlace.value = woah;
+      handleMove();
+    } else {
+      selectedPiece.value = woah;
+    }
+  }
+}
+
+function handleMove() {
+  if (selectedPiece.value && desiredPlace.value) {
+    const thing = move(game, {
+      from: selectedPiece.value,
+      to: desiredPlace.value,
+    });
+    if (!thing) {
+      alert("could not make that move");
+    }
+    selectedPiece.value = null;
+    desiredPlace.value = null;
+  }
+  player.value = currentPlayer(game);
+  state.board = currentBoard(game);
+}
+
+function isSelected(row: number, column: string): boolean {
+  return selectedPiece.value === sanString(row, column);
+}
+
+// function isDisabled(rowIndex: number, columnIndex: number): boolean {
+//   const piece = getPiece(rowIndex, columnIndex);
+//   if (piece) {
+//     return piece.color !== player.value;
+//   }
+//   return true;
+// }
 </script>
 
 <template>
-  <h1>{{ player }}</h1>
-  <button @click="handleMove" data-testid="moveButton">make a move</button>
+  <!-- https://bobbyhadz.com/blog/typescript-const-enum-member-can-only-be-accessed-using-string-literal - thankyou -->
+  <div>
+    <h1>{{ Color[player] }}</h1>
+    <h2>{{ selectedPiece || "no piece selected" }}</h2>
+  </div>
+  <!-- <button @click="handleMove()" data-testid="moveButton">make a move</button> -->
   <section class="boardAsGrid" data-testid="board" :style="{ ...cssVars }">
     <!-- row for the letters -->
     <!-- Tring to extract a component to avoid repetition -->
@@ -107,13 +150,16 @@ function isDisabled(rowIndex: number, columnIndex: number): boolean {
         :style="{
           gridColumnStart: columnIndex + 2,
           gridRowStart: rowIndex + 2,
+          padding: 0,
+          borderRadius: 0,
+          borderWidth: 0,
         }"
-        @click="handleSelect"
-        :disabled="isDisabled(rowIndex, columnIndex)"
+        @click="handleSelect(row, column)"
         :key="rowIndex + columnIndex"
       >
         <BoardCell
           :background="(rowIndex + columnIndex) % 2 === 0 ? 'light' : 'dark'"
+          :selected="isSelected(row, column)"
           :position="getPiece(rowIndex, columnIndex)"
           :column="columnIndex"
           data-testid="piece"
@@ -147,7 +193,6 @@ function isDisabled(rowIndex: number, columnIndex: number): boolean {
   display: grid;
   grid-template-columns: repeat(var(--boardSize) + 2, 1fr);
   grid-template-rows: repeat(var(--boardSize) + 2, 1fr);
-  grid-gap: 1px;
   width: 400px;
   height: 400px;
 }
