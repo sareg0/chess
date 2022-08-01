@@ -8,6 +8,7 @@ import {
   currentBoard,
   Color,
   type BoardSquare,
+  isMove,
 } from "@/api/GameLogic";
 import { SQUARES, type ShortMove, type Square } from "chess.js";
 // import BoardFrame from "@/components/GameBoard/components/BoardFrame/BoardFrame.vue";
@@ -85,8 +86,19 @@ function handleMove() {
       from: selectedPiece.value,
       to: desiredPlace.value,
     });
-    if (!thing) {
+    // if thing is 'game over', then the game is over
+    // if null then the move couldn't be made
+    // if Move object then make the move
+    if (thing === "game over") {
+      alert("game over");
+    } else if (thing === null) {
       alert("could not make that move");
+    } else if (isMove(thing)) {
+      if (thing?.captured) {
+        alert(`successfully captured: ${thing.captured}`);
+      }
+    } else {
+      throw Error("unknown values!!!!");
     }
     selectedPiece.value = null;
     desiredPlace.value = null;
