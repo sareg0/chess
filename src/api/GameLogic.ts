@@ -10,6 +10,7 @@ import {
   ROOK,
   QUEEN,
   KING,
+  type Move,
 } from "chess.js";
 // https://github.com/jhlywa/chess.js/blob/master/README.md#example-code
 
@@ -17,11 +18,17 @@ export function newGame() {
   return new Chess();
 }
 
-export function move(game: ChessInstance, move: ShortMove) {
+export function move(
+  game: ChessInstance,
+  move: ShortMove
+): (Move | null) | "game over" {
   console.log("move", move);
-  if (!game.game_over()) {
-    return game.move(move);
+  const isGameOver = game.game_over();
+  if (isGameOver) {
+    return "game over";
   }
+
+  return game.move(move);
 }
 
 export function currentPlayer(game: ChessInstance) {
@@ -30,6 +37,10 @@ export function currentPlayer(game: ChessInstance) {
 
 export function currentBoard(game: ChessInstance): (BoardSquare | null)[][] {
   return game.board();
+}
+
+export function isMove(move: Move): move is Move {
+  return (move as Move).color !== undefined;
 }
 
 export interface BoardSquare {
