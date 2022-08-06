@@ -14,7 +14,35 @@ import {
 // https://github.com/jhlywa/chess.js/blob/master/README.md#example-code
 
 export function newGame() {
-  return new Chess();
+  const myGame = new Chess();
+  console.log("fen", myGame.fen());
+  saveGame(myGame.fen());
+  return myGame;
+}
+
+async function saveGame(fenString: string) {
+  const response = await fetch("http://localhost:8080", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json;charset=UTF-8",
+    },
+    body: JSON.stringify({
+      foo: "bar",
+      game: fenString,
+    }),
+  });
+
+  const { data, errors } = await response.json();
+
+  console.log("data", data);
+  console.log("errors", errors);
+
+  // .then((response) => {
+  //   console.log('response:!!!!', response)
+  // }).catch((e) => {
+  //   console.log('error!!!!', e);
+
+  // })
 }
 
 export function move(game: ChessInstance, move: ShortMove) {
