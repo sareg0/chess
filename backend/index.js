@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const fs = require('fs/promises')
 
 const port = 8080
 
@@ -20,9 +21,17 @@ app.post('/', (req, res) => {
     'Access-Control-Allow-Origin': 'http://localhost:3000',
   })
   console.log('POST req', req.body)
+  const gameId = 1
+  try {
+    fs.writeFile(`./data/${gameId}.json`, JSON.stringify(req.body))
+  } catch(e) {
+    console.error('error to post!:', e)
+  }
   // console.log('POST res', res.body)
   res.json({
-    data: 'bleepbloop',
+    data: {
+      id: gameId
+    },
     errors: 'nothing'
   })
 })
