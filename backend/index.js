@@ -1,41 +1,70 @@
-const express = require('express')
-const app = express()
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const fs = require('fs/promises')
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const fs = require("fs/promises");
 
-const port = 8080
+const port = 8080;
 
-app.use(cors())
-app.use(bodyParser.json())
+app.use(cors());
+app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
+// Not used. Could be used to list all games
+app.get("/", (req, res) => {
   res.set({
-    'Access-Control-Allow-Origin': 'http://localhost:3000',
-  })
-  res.send('Hello World')
-})
+    "Access-Control-Allow-Origin": "http://localhost:3000",
+  });
+  res.send("Hello World");
+});
 
-app.post('/', (req, res) => {
+// Create a game
+app.post("/", (req, res) => {
   res.set({
-    'Access-Control-Allow-Origin': 'http://localhost:3000',
-  })
-  console.log('POST req', req.body)
-  const gameId = 1
+    "Access-Control-Allow-Origin": "http://localhost:3000",
+  });
+
+  console.log("POST req", req.body);
+  const gameId = 2;
+
   try {
-    fs.writeFile(`./data/${gameId}.json`, JSON.stringify(req.body))
-  } catch(e) {
-    console.error('error to post!:', e)
+    fs.writeFile(`./data/${gameId}.json`, JSON.stringify(req.body));
+  } catch (e) {
+    console.error("error to post!:", e);
   }
-  // console.log('POST res', res.body)
+
   res.json({
     data: {
-      id: gameId
+      id: gameId,
     },
-    errors: 'nothing'
-  })
-})
+    errors: "nothing",
+  });
+});
 
-app.listen(port, ()=>{
-  console.log(`Example app listening on port ${port}`)
-})
+// READ: Get a game by its id
+app.get("/games/:gameId", async (req, res) => {
+  // console.log("request", req);
+  res.set({
+    "Access-Control-Allow-Origin": "http://localhost:3000",
+  });
+  const gameId = req.params.gameId;
+  let errors = [];
+  let data;
+  try {
+    const raw = await fs.readFile(`./data/${gameId}.json`, "utf8");
+    data = JSON.parse(raw);
+    console.log("parsed data", data);
+  } catch (e) {
+    errors.push(e);
+  }
+  res.json({
+    data,
+    errors,
+  });
+});
+
+// TODO: UPDATE a game
+// TODO: DELETE a game
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
