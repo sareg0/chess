@@ -17,3 +17,6 @@ node_modules
 
 
 .dccache
+
+# temporary data storage for games
+data/*
